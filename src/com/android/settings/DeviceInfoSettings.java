@@ -93,7 +93,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
         setValueSummary(KEY_EQUIPMENT_ID, PROPERTY_EQUIPMENT_ID);
         setStringSummary(KEY_DEVICE_MODEL, Build.MODEL);
         setStringSummary(KEY_BUILD_NUMBER, Build.DISPLAY);
-        setStringSummary(KEY_ROM_VERSION, PROPERTY_ROM_VERSION);
+        setValueSummary(KEY_ROM_VERSION, PROPERTY_ROM_VERSION);
         findPreference(KEY_BUILD_NUMBER).setEnabled(true);
         findPreference(KEY_KERNEL_VERSION).setSummary(getFormattedKernelVersion());
 
