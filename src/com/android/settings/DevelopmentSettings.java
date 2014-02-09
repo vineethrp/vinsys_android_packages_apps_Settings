@@ -131,6 +131,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     private static final String DEBUG_APPLICATIONS_CATEGORY_KEY = "debug_applications_category";
     private static final String WIFI_DISPLAY_CERTIFICATION_KEY = "wifi_display_certification";
 
+    private static final String ENABLE_ADVANCED_REBOOT_OPTION_MENU = "enable_advanced_reboot";
+
     private static final String OPENGL_TRACES_KEY = "enable_opengl_traces";
 
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
@@ -165,6 +167,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     private CheckBoxPreference mBtHciSnoopLog;
     private CheckBoxPreference mAllowMockLocation;
     private PreferenceScreen mPassword;
+
+    private CheckBoxPreference mEnableAdvancedRebootOptionMenu;
 
     private String mDebugApp;
     private Preference mDebugAppPref;
@@ -257,11 +261,14 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         mPassword = (PreferenceScreen) findPreference(LOCAL_BACKUP_PASSWORD);
         mAllPrefs.add(mPassword);
 
+        mEnableAdvancedRebootOptionMenu = findAndInitCheckboxPref(ENABLE_ADVANCED_REBOOT_OPTION_MENU);
+
         if (!android.os.Process.myUserHandle().equals(UserHandle.OWNER)) {
             disableForUser(mEnableAdb);
             disableForUser(mClearAdbKeys);
             disableForUser(mEnableTerminal);
             disableForUser(mPassword);
+            disableForUser(mEnableAdvancedRebootOptionMenu);
         }
 
         mDebugAppPref = findPreference(DEBUG_APP_KEY);
@@ -497,6 +504,17 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         updateBugreportOptions();
         updateForceRtlOptions();
         updateWifiDisplayCertificationOptions();
+        updateEnableAdvancedRebootOptionMenu();
+    }
+
+    private void writeEnableAdvancedRebootOptionMenu() {
+        Settings.Secure.putInt(getActivity().getContentResolver(),
+                Settings.Secure.ADVANCED_REBOOT,
+                mEnableAdvancedRebootOptionMenu.isChecked() ? 1 : 0);
+    }
+    private void updateEnableAdvancedRebootOptionMenu() {
+        mEnableAdvancedRebootOptionMenu.setChecked(Settings.Secure.getInt(getActivity().getContentResolver(),
+                Settings.Secure.ADVANCED_REBOOT, 0) != 0);
     }
 
     private void resetDangerousOptions() {
@@ -1243,6 +1261,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
             writeForceRtlOptions();
         } else if (preference == mWifiDisplayCertification) {
             writeWifiDisplayCertificationOptions();
+        } else if (preference == mEnableAdvancedRebootOptionMenu) {
+            writeEnableAdvancedRebootOptionMenu();
         } else {
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
